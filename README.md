@@ -16,7 +16,7 @@ python scaffold.py
 - [x] **4.** symmetric_normalize_edge_weights
 - [x] **5.** gather_source_node_features
 - [x] **6.** scatter_sum_to_nodes
-- [ ] **7.** scatter_mean_to_nodes
+- [x] **7.** scatter_mean_to_nodes
 - [ ] **8.** scatter_max_to_nodes
 - [ ] **9.** compute_messages
 - [ ] **10.** aggregate_messages
