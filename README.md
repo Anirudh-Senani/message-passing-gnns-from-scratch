@@ -13,7 +13,7 @@ python scaffold.py
 - [x] **1.** edges_to_coo
 - [x] **2.** add_self_loops
 - [x] **3.** compute_node_degrees
-- [ ] **4.** symmetric_normalize_edge_weights
+- [x] **4.** symmetric_normalize_edge_weights
 - [ ] **5.** gather_source_node_features
 - [ ] **6.** scatter_sum_to_nodes
 - [ ] **7.** scatter_mean_to_nodes
