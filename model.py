@@ -85,8 +85,10 @@ def symmetric_normalize_edge_weights(src, dst, num_nodes, edge_weight=None):
     denom = torch.sqrt(in_deg[src] * in_deg[dst])
     return torch.where(denom == 0, torch.tensor(0.0), edge_weight/denom)
 
-# Step 5 - gather_source_node_features (not yet solved)
-# TODO: implement
+# Step 5 - gather_source_node_features
+def gather_source_node_features(node_features, src):
+    # TODO: Return edge-aligned source feature rows (E, F) from node_features.
+    return node_features[src].clone()
 
 # Step 6 - scatter_sum_to_nodes (not yet solved)
 # TODO: implement
