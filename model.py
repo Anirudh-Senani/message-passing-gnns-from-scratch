@@ -262,8 +262,40 @@ def gcn_linear_transform(node_features, weight, bias=None):
 
     return out
 
-# Step 16 - gcn_layer_forward (not yet solved)
-# TODO: implement
+# Step 16 - gcn_layer_forward
+def gcn_layer_forward(node_features, src, dst, weight, bias=None, num_nodes=None, activation=None):
+    """Forward pass of one GCN layer: renormalize, transform, propagate.
+
+    Args:
+        node_features: FloatTensor of shape (N, Fin).
+        src: LongTensor of shape (E,) source indices.
+        dst: LongTensor of shape (E,) destination indices.
+        weight: FloatTensor of shape (Fin, Fout).
+        bias: optional FloatTensor of shape (Fout,).
+        num_nodes: optional int N; defaults to node_features.shape[0].
+        activation: optional callable applied to the output.
+
+    Returns:
+        FloatTensor of shape (N, Fout).
+    """
+    # TODO: Forward pass of one GCN layer: renormalize, transform, propagate...
+    num_nodes = num_nodes or node_features.shape[0]
+
+    src_hat, dst_hat, norm = gcn_renormalize_adjacency(src, dst, num_nodes)
+    lin = gcn_linear_transform(node_features, weight)
+
+    src_feats = gather_source_node_features(lin, src_hat)
+    edge_features = src_feats * norm.unsqueeze(-1)
+
+    out = scatter_sum_to_nodes(edge_features, dst_hat, num_nodes)
+
+    if bias is not None:
+        out += bias
+
+    if activation is not None:
+        out = activation(out)
+
+    return out
 
 # Step 17 - init_gcn_parameters (not yet solved)
 # TODO: implement

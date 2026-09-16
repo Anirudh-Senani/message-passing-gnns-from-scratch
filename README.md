@@ -25,7 +25,7 @@ python scaffold.py
 - [x] **13.** stack_message_passing_layers
 - [x] **14.** gcn_renormalize_adjacency
 - [x] **15.** gcn_linear_transform
-- [ ] **16.** gcn_layer_forward
+- [x] **16.** gcn_layer_forward
 - [ ] **17.** init_gcn_parameters
 - [ ] **18.** gcn_stack_forward
 - [ ] **19.** gat_attention_logits
