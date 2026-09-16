@@ -21,7 +21,7 @@ python scaffold.py
 - [x] **9.** compute_messages
 - [x] **10.** aggregate_messages
 - [x] **11.** update_node_features
-- [ ] **12.** message_passing_layer
+- [x] **12.** message_passing_layer
 - [ ] **13.** stack_message_passing_layers
 - [ ] **14.** gcn_renormalize_adjacency
 - [ ] **15.** gcn_linear_transform
