@@ -243,8 +243,24 @@ def gcn_renormalize_adjacency(src, dst, num_nodes):
 
     return src_hat, dst_hat, norm_weight
 
-# Step 15 - gcn_linear_transform (not yet solved)
-# TODO: implement
+# Step 15 - gcn_linear_transform
+def gcn_linear_transform(node_features, weight, bias=None):
+    """Apply the GCN linear feature transform X @ W (+ bias).
+
+    Args:
+        node_features: FloatTensor of shape (N, Fin).
+        weight: FloatTensor of shape (Fin, Fout).
+        bias: optional FloatTensor of shape (Fout).
+
+    Returns:
+        FloatTensor of shape (N, Fout).
+    """
+    # TODO: compute the matrix product and optionally add a bias vector
+    out = node_features @ weight
+    if bias is not None:
+        out += bias
+
+    return out
 
 # Step 16 - gcn_layer_forward (not yet solved)
 # TODO: implement
