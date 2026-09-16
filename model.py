@@ -297,8 +297,19 @@ def gcn_layer_forward(node_features, src, dst, weight, bias=None, num_nodes=None
 
     return out
 
-# Step 17 - init_gcn_parameters (not yet solved)
-# TODO: implement
+# Step 17 - init_gcn_parameters
+def init_gcn_parameters(in_dim, out_dim, with_bias=True, seed=None):
+    # TODO: Initialize GCN weight (and optional bias) with Glorot-style uniform...
+    if seed is not None:
+        torch.manual_seed(seed)
+
+    glorot_var = (6/(in_dim+out_dim))**0.5
+    params = dict(
+        weight=torch.empty((in_dim, out_dim)).uniform_(-glorot_var, glorot_var)
+    )
+    if with_bias:
+        params['bias'] = torch.zeros((out_dim,))
+    return params
 
 # Step 18 - gcn_stack_forward (not yet solved)
 # TODO: implement
