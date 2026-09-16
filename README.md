@@ -19,7 +19,7 @@ python scaffold.py
 - [x] **7.** scatter_mean_to_nodes
 - [x] **8.** scatter_max_to_nodes
 - [x] **9.** compute_messages
-- [ ] **10.** aggregate_messages
+- [x] **10.** aggregate_messages
 - [ ] **11.** update_node_features
 - [ ] **12.** message_passing_layer
 - [ ] **13.** stack_message_passing_layers
