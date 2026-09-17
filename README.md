@@ -42,7 +42,7 @@ python scaffold.py
 - [x] **30.** node_classification_head
 - [x] **31.** graph_regression_head
 - [x] **32.** generate_sbm_graph
-- [ ] **33.** build_node_classification_dataset
+- [x] **33.** build_node_classification_dataset
 - [ ] **34.** generate_molecule_like_graph
 - [ ] **35.** build_graph_regression_dataset
 - [ ] **36.** collate_graph_batch
