@@ -47,7 +47,7 @@ python scaffold.py
 - [x] **35.** build_graph_regression_dataset
 - [x] **36.** collate_graph_batch
 - [x] **37.** cross_entropy_loss
-- [ ] **38.** mse_loss
+- [x] **38.** mse_loss
 - [ ] **39.** accuracy_metric
 - [ ] **40.** mae_metric
 - [ ] **41.** gnn_train_step
