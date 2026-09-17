@@ -41,7 +41,7 @@ python scaffold.py
 - [x] **29.** global_mean_max_pool
 - [x] **30.** node_classification_head
 - [x] **31.** graph_regression_head
-- [ ] **32.** generate_sbm_graph
+- [x] **32.** generate_sbm_graph
 - [ ] **33.** build_node_classification_dataset
 - [ ] **34.** generate_molecule_like_graph
 - [ ] **35.** build_graph_regression_dataset
