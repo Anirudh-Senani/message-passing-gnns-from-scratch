@@ -816,8 +816,56 @@ def train_node_classifier(params, dataset, forward_fn, num_epochs, lr, mask_key=
         params=params
     )
 
-# Step 43 - train_graph_regressor (not yet solved)
-# TODO: implement
+# Step 43 - train_graph_regressor
+def train_graph_regressor(params, graphs, forward_fn, num_epochs, lr, batch_size=8):
+    """Train a graph regressor over multiple epochs of mini-batches.
+
+    Args:
+        params: dict of trainable torch tensors.
+        graphs: list of graph dicts with keys x, edge_index, y.
+        forward_fn: callable(params, batch) -> predictions.
+        num_epochs: number of training epochs.
+        lr: learning rate for SGD updates.
+        batch_size: graphs per mini-batch (default 8).
+
+    Returns:
+        history: dict with 'loss' and 'mae' lists of per-epoch floats.
+        params: updated parameter dict.
+    """
+    # TODO: Train a graph regressor over epochs of mini-batches, tracking loss and MAE
+    history = {'loss': [], 'mae': []}
+    loss_fn = mse_loss
+    graphs_len = max(len(graphs), 1)
+
+    for _ in range(num_epochs):
+        total_loss = 0.0
+        total_mae = 0.0
+        for i in range(0, len(graphs), batch_size):
+            batch = graphs[i:i+batch_size]
+            batch_len = len(batch)
+            batch = collate_graph_batch(batch)
+
+            preds = forward_fn(params, batch)
+            loss = loss_fn(preds, batch['y'])
+
+            for key in params:
+                params[key].grad = None
+
+            loss.backward()
+            with torch.no_grad():
+                for key in params:
+                    params[key] -= lr * params[key].grad
+
+            total_mae += mae_metric(preds, batch['y']).item() * batch_len
+            total_loss += loss.item() * batch_len
+
+        total_loss /= graphs_len
+        total_mae /= graphs_len
+
+        history['loss'].append(total_loss)
+        history['mae'].append(total_mae)
+
+    return history, params
 
 # Step 44 - representation_similarity (not yet solved)
 # TODO: implement
