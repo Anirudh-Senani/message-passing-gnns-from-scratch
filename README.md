@@ -31,7 +31,7 @@ python scaffold.py
 - [x] **19.** gat_attention_logits
 - [x] **20.** gat_masked_neighbor_softmax
 - [x] **21.** gat_head_forward
-- [ ] **22.** merge_gat_heads
+- [x] **22.** merge_gat_heads
 - [ ] **23.** gat_layer_forward
 - [ ] **24.** init_gat_parameters
 - [ ] **25.** gat_stack_forward
