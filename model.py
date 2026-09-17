@@ -882,7 +882,7 @@ def representation_similarity(features_a, features_b):
     if len(features_a.shape) < 3:
         out = cos_sim.mean().item()
     else:
-        out = cos_sim.unsqueeze(-1).mean(dim=-1)
+        out = cos_sim.squeeze(-1).mean(dim=-1)
 
     return out
 
