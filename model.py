@@ -867,8 +867,19 @@ def train_graph_regressor(params, graphs, forward_fn, num_epochs, lr, batch_size
 
     return history, params
 
-# Step 44 - representation_similarity (not yet solved)
-# TODO: implement
+# Step 44 - representation_similarity
+def representation_similarity(features_a, features_b):
+    # TODO: Return mean cosine similarity of corresponding rows (eps=1e-8)...
+    eps = 1e-8
+    # norm_a = torch.linalg.norm(features_a, dim=-1, keepdim=True) + eps
+    norm_a = features_a.norm(dim=-1, keepdim=True) + eps
+    # norm_b = torch.linalg.norm(features_b, dim=-1, keepdim=True) + eps
+    norm_b = features_b.norm(dim=-1, keepdim=True) + eps
+
+    cos_sim = (features_a * features_b).sum(dim=-1, keepdim=True)
+    cos_sim /= (norm_a * norm_b)
+
+    return cos_sim.mean().item()
 
 # Step 45 - oversmoothing_diagnostic (not yet solved)
 # TODO: implement
