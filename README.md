@@ -48,7 +48,7 @@ python scaffold.py
 - [x] **36.** collate_graph_batch
 - [x] **37.** cross_entropy_loss
 - [x] **38.** mse_loss
-- [ ] **39.** accuracy_metric
+- [x] **39.** accuracy_metric
 - [ ] **40.** mae_metric
 - [ ] **41.** gnn_train_step
 - [ ] **42.** train_node_classifier
