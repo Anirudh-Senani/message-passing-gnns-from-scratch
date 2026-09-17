@@ -38,7 +38,7 @@ python scaffold.py
 - [x] **26.** global_mean_pool
 - [x] **27.** global_sum_pool
 - [x] **28.** global_max_pool
-- [ ] **29.** global_mean_max_pool
+- [x] **29.** global_mean_max_pool
 - [ ] **30.** node_classification_head
 - [ ] **31.** graph_regression_head
 - [ ] **32.** generate_sbm_graph

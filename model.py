@@ -582,8 +582,20 @@ def global_max_pool(node_features, batch_index, num_graphs=None):
     num_graphs = num_graphs or batch_index.max().item() + 1
     return scatter_max_to_nodes(node_features, batch_index, num_graphs)
 
-# Step 29 - global_mean_max_pool (not yet solved)
-# TODO: implement
+# Step 29 - global_mean_max_pool
+def global_mean_max_pool(node_features, batch_index, num_graphs=None):
+    """Concatenate global mean and max pooled features into a 2F-dim graph vector.
+
+    Args:
+        node_features: FloatTensor of shape (N, F).
+        batch_index: LongTensor of shape (N,) with graph ids in {0, ..., B-1}.
+        num_graphs: Optional int B. If None, inferred as batch_index.max() + 1.
+
+    Returns:
+        FloatTensor of shape (B, 2F); each row is [mean_pool || max_pool].
+    """
+    # TODO: Concatenate global mean and max pooled features into a 2F-dim vector...
+    return torch.cat([global_mean_pool(node_features, batch_index, num_graphs), global_max_pool(node_features, batch_index, num_graphs)], dim=-1)
 
 # Step 30 - node_classification_head (not yet solved)
 # TODO: implement
