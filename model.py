@@ -697,8 +697,16 @@ def generate_molecule_like_graph(num_nodes, num_node_features, edge_prob=0.3, se
         y=y
     )
 
-# Step 35 - build_graph_regression_dataset (not yet solved)
-# TODO: implement
+# Step 35 - build_graph_regression_dataset
+def build_graph_regression_dataset(num_graphs, num_nodes_range, num_node_features, edge_prob=0.3, seed=0):
+    # TODO: Build a list of molecule-like graphs for graph-level regression.
+    graphs = []
+    lo, hi = num_nodes_range
+    for i in range(num_graphs):
+        num_nodes = lo + (i % (hi - lo + 1))
+        graphs.append(generate_molecule_like_graph(num_nodes, num_node_features, edge_prob, seed+i))
+
+    return graphs
 
 # Step 36 - collate_graph_batch (not yet solved)
 # TODO: implement

@@ -44,7 +44,7 @@ python scaffold.py
 - [x] **32.** generate_sbm_graph
 - [x] **33.** build_node_classification_dataset
 - [x] **34.** generate_molecule_like_graph
-- [ ] **35.** build_graph_regression_dataset
+- [x] **35.** build_graph_regression_dataset
 - [ ] **36.** collate_graph_batch
 - [ ] **37.** cross_entropy_loss
 - [ ] **38.** mse_loss
