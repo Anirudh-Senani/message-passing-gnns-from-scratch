@@ -32,7 +32,7 @@ python scaffold.py
 - [x] **20.** gat_masked_neighbor_softmax
 - [x] **21.** gat_head_forward
 - [x] **22.** merge_gat_heads
-- [ ] **23.** gat_layer_forward
+- [x] **23.** gat_layer_forward
 - [ ] **24.** init_gat_parameters
 - [ ] **25.** gat_stack_forward
 - [ ] **26.** global_mean_pool
