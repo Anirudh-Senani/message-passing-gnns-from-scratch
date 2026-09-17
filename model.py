@@ -597,8 +597,14 @@ def global_mean_max_pool(node_features, batch_index, num_graphs=None):
     # TODO: Concatenate global mean and max pooled features into a 2F-dim vector...
     return torch.cat([global_mean_pool(node_features, batch_index, num_graphs), global_max_pool(node_features, batch_index, num_graphs)], dim=-1)
 
-# Step 30 - node_classification_head (not yet solved)
-# TODO: implement
+# Step 30 - node_classification_head
+def node_classification_head(node_embeddings, weight, bias=None):
+    # TODO: Map node embeddings to per-node class logits via a linear head...
+    logits = node_embeddings @ weight
+    if bias is not None:
+        logits += bias
+
+    return logits
 
 # Step 31 - graph_regression_head (not yet solved)
 # TODO: implement
