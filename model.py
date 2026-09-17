@@ -475,8 +475,31 @@ def gat_layer_forward(node_features, src, dst, head_params, merge_mode='concat',
 
     return out, all_attn
 
-# Step 24 - init_gat_parameters (not yet solved)
-# TODO: implement
+# Step 24 - init_gat_parameters
+def init_gat_parameters(in_dim, out_dim, num_heads=1, with_bias=True, seed=None):
+    # TODO: Initialize multi-head GAT parameters with Glorot-style initialization.
+    if seed is not None:
+        torch.manual_seed(seed)
+
+    glorot_var_w = (6/(in_dim+out_dim))**0.5
+    glorot_var_a = (6/(out_dim+1))**0.5
+
+    head_params = []
+    for _ in range(num_heads):
+        params = {}
+        params['weight'] = torch.empty((in_dim, out_dim), dtype=torch.float32).uniform_(-glorot_var_w, glorot_var_w)
+        params['weight'].requires_grad = True
+        params['attn_src'] = torch.empty((out_dim,), dtype=torch.float32).uniform_(-glorot_var_a, glorot_var_a)
+        params['attn_src'].requires_grad = True
+        params['attn_dst'] = torch.empty((out_dim,), dtype=torch.float32).uniform_(-glorot_var_a, glorot_var_a)
+        params['attn_dst'].requires_grad = True
+
+        if with_bias:
+            params['bias'] = torch.zeros((out_dim,), dtype=torch.float32, requires_grad=True)
+
+        head_params.append(params)
+
+    return head_params
 
 # Step 25 - gat_stack_forward (not yet solved)
 # TODO: implement
