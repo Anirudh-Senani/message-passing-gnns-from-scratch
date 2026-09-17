@@ -879,10 +879,29 @@ def representation_similarity(features_a, features_b):
     cos_sim = (features_a * features_b).sum(dim=-1, keepdim=True)
     cos_sim /= (norm_a * norm_b)
 
-    return cos_sim.mean().item()
+    if len(features_a.shape) < 3:
+        out = cos_sim.mean().item()
+    else:
+        out = cos_sim.unsqueeze(-1).mean(dim=-1)
 
-# Step 45 - oversmoothing_diagnostic (not yet solved)
-# TODO: implement
+    return out
+
+# Step 45 - oversmoothing_diagnostic
+def oversmoothing_diagnostic(layer_features):
+    # TODO: Diagnose oversmoothing via consecutive-layer representation similarities.
+    if len(layer_features) < 2:
+        return dict(
+            pairwise_similarities=[],
+            mean_similarity=0.0
+        )
+
+    layer_features = torch.stack(layer_features)
+    pairwise_similarities = representation_similarity(layer_features[:-1], layer_features[1:])
+
+    return dict(
+        pairwise_similarities=pairwise_similarities.tolist(),
+        mean_similarity=pairwise_similarities.mean().item()
+    )
 
 # Step 46 - mpnn_gnn_experiment (not yet solved)
 # TODO: implement

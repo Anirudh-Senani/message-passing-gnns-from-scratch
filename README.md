@@ -54,7 +54,7 @@ python scaffold.py
 - [x] **42.** train_node_classifier
 - [x] **43.** train_graph_regressor
 - [x] **44.** representation_similarity
-- [ ] **45.** oversmoothing_diagnostic
+- [x] **45.** oversmoothing_diagnostic
 - [ ] **46.** mpnn_gnn_experiment
 
 ---
