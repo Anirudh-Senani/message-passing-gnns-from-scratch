@@ -35,7 +35,7 @@ python scaffold.py
 - [x] **23.** gat_layer_forward
 - [x] **24.** init_gat_parameters
 - [x] **25.** gat_stack_forward
-- [ ] **26.** global_mean_pool
+- [x] **26.** global_mean_pool
 - [ ] **27.** global_sum_pool
 - [ ] **28.** global_max_pool
 - [ ] **29.** global_mean_max_pool
