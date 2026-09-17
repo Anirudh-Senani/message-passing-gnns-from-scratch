@@ -51,7 +51,7 @@ python scaffold.py
 - [x] **39.** accuracy_metric
 - [x] **40.** mae_metric
 - [x] **41.** gnn_train_step
-- [ ] **42.** train_node_classifier
+- [x] **42.** train_node_classifier
 - [ ] **43.** train_graph_regressor
 - [ ] **44.** representation_similarity
 - [ ] **45.** oversmoothing_diagnostic
