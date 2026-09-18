@@ -799,8 +799,13 @@ def train_node_classifier(params, dataset, forward_fn, num_epochs, lr, mask_key=
         preds = forward_fn(params, batch['x'], batch['edge_index'])
         loss = loss_fn(preds, batch['y'])
 
-        for key in params:
-            params[key].grad = None
+        if isinstance(params, list):
+            for param in params:
+                for key in param:
+                    param[key].grad = None
+        else:
+            for key in params:
+                params[key].grad = None
 
         loss.backward()
         with torch.no_grad():
