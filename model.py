@@ -304,9 +304,9 @@ def init_gcn_parameters(in_dim, out_dim, with_bias=True, seed=None):
         torch.manual_seed(seed)
 
     glorot_var = (6/(in_dim+out_dim))**0.5
-    params = dict(
-        weight=torch.empty((in_dim, out_dim)).uniform_(-glorot_var, glorot_var)
-    )
+    params = {}
+    params['weight'] = torch.empty((in_dim, out_dim)).uniform_(-glorot_var, glorot_var)
+    params['weight'].requires_grad = True
     if with_bias:
         params['bias'] = torch.zeros((out_dim,))
     return params
@@ -966,8 +966,8 @@ def mpnn_gnn_experiment(num_nodes=40, num_features=8, num_classes=2, num_layers=
     gat_layers.append(init_gcn_parameters(hidden_dim, num_classes, seed=seed+50))
     gcn_layers.append(init_gcn_parameters(hidden_dim, num_classes, seed=seed+150))
 
-    gat_forward_fn = lambda p, x, e: node_classification_head(gat_stack_forward(x, e[0,:], e[1,:], p[:-1], merge_modes, activations, num_nodes)[0], p[-1]['weight'], p[-1].get('bias',None))
-    gcn_forward_fn = lambda p, x, e: node_classification_head(gcn_stack_forward(x, e[0,:], e[1,:], p[:-1], activations, num_nodes)[0], p[-1]['weight'], p[-1].get('bias',None))
+    gat_forward_fn = lambda p, x, e: node_classification_head(gat_stack_forward(x, e[0,:], e[1,:], p[:-1], merge_modes, activations, num_nodes//2)[0], p[-1]['weight'], p[-1].get('bias',None))
+    gcn_forward_fn = lambda p, x, e: node_classification_head(gcn_stack_forward(x, e[0,:], e[1,:], p[:-1], activations, num_nodes//2)[0], p[-1]['weight'], p[-1].get('bias',None))
 
     gat = train_node_classifier(gat_layers, dataset, gat_forward_fn, num_epochs, lr)
     gcn = train_node_classifier(gcn_layers, dataset, gcn_forward_fn, num_epochs, lr)
@@ -977,7 +977,7 @@ def mpnn_gnn_experiment(num_nodes=40, num_features=8, num_classes=2, num_layers=
 
     with torch.no_grad():
         _, gat_layer_features = gat_stack_forward(dataset['x'], dataset['edge_index'][0,:], dataset['edge_index'][1,:], gat_params, merge_modes, activations, num_nodes)
-        _, gcn_layer_features = gcn_stack_forward(dataset['x'], dataset['edge_index'][0,:], dataset['edge_index'][1,:], gat_params, activations, num_nodes)
+        _, gcn_layer_features = gcn_stack_forward(dataset['x'], dataset['edge_index'][0,:], dataset['edge_index'][1,:], gcn_params, activations, num_nodes)
 
     gat['oversmoothing'] = oversmoothing_diagnostic(gat_layer_features)
     gcn['oversmoothing'] = oversmoothing_diagnostic(gcn_layer_features)
