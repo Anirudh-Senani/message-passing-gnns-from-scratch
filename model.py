@@ -790,13 +790,22 @@ def train_node_classifier(params, dataset, forward_fn, num_epochs, lr, mask_key=
     loss_fn = cross_entropy_loss
     forw_fn = lambda p, b: forward_fn(p, b['x'], b['edge_index'])
 
-    for _ in range(num_epochs):
-        batch = {}
-        batch['x'] = dataset['x'][dataset[mask_key]]
-        batch['edge_index'] = dataset['edge_index']
-        batch['y'] = dataset['y'][dataset[mask_key]]
+    batch = {}
+    batch['x'] = dataset['x'][dataset[mask_key]]
+    batch['edge_index'] = dataset['edge_index']
+    batch['y'] = dataset['y'][dataset[mask_key]]
 
-        preds = forward_fn(params, batch['x'], batch['edge_index'])
+    num_nodes = dataset['x'].shape[0]
+    true_inds = torch.arange(num_nodes)[dataset[mask_key]]
+    selected = torch.sort(true_inds).values
+    mapping = torch.full((num_nodes,), -1, dtype=torch.long)
+    mapping[selected] = torch.arange(selected.numel())
+    mapped = mapping[dataset['edge_index']]
+    mask = (mapped[0,:] != -1) & (mapped[1,:] != -1)
+    edge_index = mapped[:, mask]
+
+    for _ in range(num_epochs):
+        preds = forward_fn(params, batch['x'], edge_index)
         loss = loss_fn(preds, batch['y'])
 
         if isinstance(params, list):
@@ -809,8 +818,13 @@ def train_node_classifier(params, dataset, forward_fn, num_epochs, lr, mask_key=
 
         loss.backward()
         with torch.no_grad():
-            for key in params:
-                params[key] -= lr * params[key].grad
+            if isinstance(params, list):
+                for param in params:
+                    for key in param:
+                        param[key] -= lr * param[key].grad
+            else:
+                for key in params:
+                    params[key] -= lr * params[key].grad
 
             accuracy = accuracy_metric(preds, batch['y'])
 
@@ -908,6 +922,63 @@ def oversmoothing_diagnostic(layer_features):
         mean_similarity=pairwise_similarities.mean().item()
     )
 
-# Step 46 - mpnn_gnn_experiment (not yet solved)
-# TODO: implement
+# Step 46 - mpnn_gnn_experiment
+def mpnn_gnn_experiment(num_nodes=40, num_features=8, num_classes=2, num_layers=3, hidden_dim=16, num_epochs=20, lr=0.01, seed=0):
+    # TODO: Run an end-to-end GCN-vs-GAT node-classification comparison on one SBM graph.
+    p_in = 0.5
+    p_out = 0.1
+
+    graph = build_node_classification_dataset(1, num_nodes, num_classes, p_in, p_out, num_features, seed=seed)[0]
+    dataset = {}
+    dataset['x'] = graph['node_features']
+    dataset['edge_index'] = graph['edge_index']
+    dataset['y'] = graph['node_labels']
+
+    torch.manual_seed(seed)
+    train_mask = torch.zeros((num_nodes,), dtype=torch.bool)
+    true_inds = torch.randperm(num_nodes)[:num_nodes//2]
+    train_mask[true_inds] = True
+    dataset['train_mask'] = train_mask
+
+    relu_fn = lambda x: torch.maximum(x, torch.tensor(0.0))
+    activations = [relu_fn]*num_layers
+    merge_modes = ['concat']*num_layers
+
+    gat_layers = []
+    gcn_layers = []
+
+    gat_layers.append(init_gat_parameters(num_features, hidden_dim, seed=seed+100))
+    gcn_layers.append(init_gcn_parameters(num_features, hidden_dim, seed=seed+10))
+
+    for i in range(num_layers-1):
+        gat_layers.append(init_gat_parameters(hidden_dim, hidden_dim, seed=seed+100+i))
+        gcn_layers.append(init_gcn_parameters(hidden_dim, hidden_dim, seed=seed+10+i))
+
+    gat_layers.append(init_gcn_parameters(hidden_dim, num_classes, seed=seed+50))
+    gcn_layers.append(init_gcn_parameters(hidden_dim, num_classes, seed=seed+150))
+
+    gat_forward_fn = lambda p, x, e: node_classification_head(gat_stack_forward(x, e[0,:], e[1,:], p[:-1], merge_modes, activations, num_nodes)[0], p[-1]['weight'], p[-1].get('bias',None))
+    gcn_forward_fn = lambda p, x, e: node_classification_head(gcn_stack_forward(x, e[0,:], e[1,:], p[:-1], activations, num_nodes)[0], p[-1]['weight'], p[-1].get('bias',None))
+
+    gat = train_node_classifier(gat_layers, dataset, gat_forward_fn, num_epochs, lr)
+    gcn = train_node_classifier(gcn_layers, dataset, gcn_forward_fn, num_epochs, lr)
+
+    gat_params = gat['params']
+    gcn_params = gcn['params']
+
+    with torch.no_grad():
+        _, gat_layer_features = gat_stack_forward(dataset['x'], dataset['edge_index'][0,:], dataset['edge_index'][1,:], gat_params, merge_modes, activations, num_nodes)
+        _, gcn_layer_features = gcn_stack_forward(dataset['x'], dataset['edge_index'][0,:], dataset['edge_index'][1,:], gat_params, activations, num_nodes)
+
+    gat['oversmoothing'] = oversmoothing_diagnostic(gat_layer_features)
+    gcn['oversmoothing'] = oversmoothing_diagnostic(gcn_layer_features)
+
+    del gat['params']
+    del gcn['params']
+
+    return dict(
+        gcn=gcn,
+        gat=gat,
+        dataset_sizes=dict(N=num_nodes, E=dataset['edge_index'].shape[-1], C=num_classes)
+    )
 
