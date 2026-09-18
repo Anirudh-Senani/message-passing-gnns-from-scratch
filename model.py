@@ -788,7 +788,6 @@ def train_node_classifier(params, dataset, forward_fn, num_epochs, lr, mask_key=
     # TODO: Train a functional node-classification GNN for several epochs on a masked graph
     history = []
     loss_fn = cross_entropy_loss
-    forw_fn = lambda p, b: forward_fn(p, b['x'], b['edge_index'])
 
     batch = {}
     batch['x'] = dataset['x'][dataset[mask_key]]
@@ -801,31 +800,41 @@ def train_node_classifier(params, dataset, forward_fn, num_epochs, lr, mask_key=
     mapping = torch.full((num_nodes,), -1, dtype=torch.long)
     mapping[selected] = torch.arange(selected.numel())
     mapped = mapping[dataset['edge_index']]
-    mask = (mapped[0,:] != -1) & (mapped[1,:] != -1)
+    mask = (mapped[0, :] != -1) & (mapped[1, :] != -1)
     edge_index = mapped[:, mask]
+
+    def zero_grad(params):
+        if isinstance(params, (list, tuple)):
+            for i in range(len(params)):
+                params[i] = zero_grad(params[i])
+        elif isinstance(params, dict):
+            for key in params:
+                params[key] = zero_grad(params[key])
+        else:
+            params.grad = None
+        return params
+
+    def update_params(params, lr):
+        if isinstance(params, (list, tuple)):
+            for i in range(len(params)):
+                params[i] = update_params(params[i], lr)
+        elif isinstance(params, dict):
+            for key in params:
+                params[key] = update_params(params[key], lr)
+        else:
+            if params.grad is not None:
+                params -= lr * params.grad
+        return params
 
     for _ in range(num_epochs):
         preds = forward_fn(params, batch['x'], edge_index)
         loss = loss_fn(preds, batch['y'])
 
-        if isinstance(params, list):
-            for param in params:
-                for key in param:
-                    param[key].grad = None
-        else:
-            for key in params:
-                params[key].grad = None
+        params = zero_grad(params)
 
         loss.backward()
         with torch.no_grad():
-            if isinstance(params, list):
-                for param in params:
-                    for key in param:
-                        param[key] -= lr * param[key].grad
-            else:
-                for key in params:
-                    params[key] -= lr * params[key].grad
-
+            params = update_params(params, lr)
             accuracy = accuracy_metric(preds, batch['y'])
 
         history.append(dict(loss=loss.item(), accuracy=accuracy))
